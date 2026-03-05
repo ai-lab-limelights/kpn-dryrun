@@ -1,20 +1,932 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KPN AI Lab</title>
+  <title>Ally — Your money. Your rules.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flyonui@2.4.1/flyonui.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          pink: {
+            400: '#ff7ad9',
+            500: '#ff3db8',
+            600: '#e6009e',
+          },
+          purple: {
+            400: '#9b8fff',
+            500: '#6b5bff',
+            600: '#5544dd',
+            700: '#4433bb',
+            800: '#332299',
+            900: '#221177',
+          },
+          lilac: '#e9e6ff',
+          dark: {
+            900: '#101018',
+            800: '#16161f',
+            700: '#1e1e2a',
+          }
+        },
+        fontFamily: {
+          display: ['Unbounded', 'sans-serif'],
+          body: ['Work Sans', 'sans-serif'],
+        }
+      }
+    }
+  }
+  </script>
   <style>
-    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0a0a0a; color: #fff; font-family: system-ui, sans-serif; }
-    .container { text-align: center; }
-    h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-    p { color: #888; font-size: 1.1rem; }
+    html { scroll-behavior: smooth; }
+    body { background: #101018; }
+
+    /* Animated gradient mesh blobs */
+    .blob-1 {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,61,184,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float1 18s ease-in-out infinite alternate;
+    }
+    .blob-2 {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(107,91,255,0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float2 22s ease-in-out infinite alternate;
+    }
+    .blob-3 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,122,217,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+      filter: blur(60px);
+      animation: float3 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes float1 {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(80px, -60px) scale(1.1); }
+      66% { transform: translate(-40px, 40px) scale(0.95); }
+      100% { transform: translate(60px, -30px) scale(1.05); }
+    }
+    @keyframes float2 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-100px, 60px) scale(1.15); }
+      100% { transform: translate(50px, -80px) scale(0.9); }
+    }
+    @keyframes float3 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 80px) scale(1.2); }
+      100% { transform: translate(-80px, -40px) scale(0.95); }
+    }
+
+    /* Hero blob image shape */
+    .hero-blob {
+      clip-path: polygon(25% 0%, 80% 5%, 100% 30%, 95% 70%, 75% 100%, 20% 95%, 0% 65%, 5% 25%);
+      animation: morph-blob 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes morph-blob {
+      0% {
+        clip-path: polygon(25% 0%, 80% 5%, 100% 30%, 95% 70%, 75% 100%, 20% 95%, 0% 65%, 5% 25%);
+      }
+      33% {
+        clip-path: polygon(30% 2%, 75% 0%, 98% 25%, 100% 65%, 70% 98%, 25% 100%, 2% 70%, 0% 30%);
+      }
+      66% {
+        clip-path: polygon(20% 5%, 82% 2%, 95% 35%, 100% 60%, 80% 95%, 15% 100%, 0% 60%, 8% 20%);
+      }
+      100% {
+        clip-path: polygon(28% 0%, 78% 8%, 100% 28%, 92% 72%, 72% 100%, 22% 92%, 0% 68%, 2% 28%);
+      }
+    }
+
+    /* Scroll animations */
+    [data-animate] {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-animate].animate-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    [data-animate-delay="1"] { transition-delay: 0.1s; }
+    [data-animate-delay="2"] { transition-delay: 0.2s; }
+    [data-animate-delay="3"] { transition-delay: 0.3s; }
+    [data-animate-delay="4"] { transition-delay: 0.4s; }
+
+    /* Flowing wave divider */
+    .wave-divider {
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+    .wave-divider svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 80px;
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #ff3db8 0%, #ff7ad9 40%, #6b5bff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glowing button */
+    .btn-glow {
+      position: relative;
+      background: linear-gradient(135deg, #ff3db8, #6b5bff);
+      border: none;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .btn-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(255,61,184,0.4), 0 0 80px rgba(107,91,255,0.2);
+    }
+
+    /* Phone mockup custom styling */
+    .ally-phone {
+      background: linear-gradient(180deg, #1a1a25 0%, #12121a 100%);
+      border: 3px solid rgba(255,255,255,0.1);
+      border-radius: 40px;
+      padding: 12px;
+      width: 280px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(107,91,255,0.15);
+    }
+    .ally-phone-screen {
+      border-radius: 30px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #12121a 0%, #1a1a25 100%);
+    }
+
+    /* Counter animation */
+    .counter {
+      display: inline-block;
+    }
+
+    /* Noise texture overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.025;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Nav glass */
+    .nav-glass {
+      background: rgba(16, 16, 24, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      transition: background 0.3s ease;
+    }
+    .nav-glass.scrolled {
+      background: rgba(16, 16, 24, 0.95);
+    }
+
+    /* Step connector line */
+    .step-line {
+      position: absolute;
+      top: 28px;
+      left: 28px;
+      width: 2px;
+      height: calc(100% - 56px);
+      background: linear-gradient(180deg, #ff3db8, #6b5bff, rgba(107,91,255,0.1));
+    }
+
+    /* Danger card glow */
+    .danger-glow {
+      position: relative;
+    }
+    .danger-glow::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(135deg, #ff3db8, #6b5bff, #ff3db8);
+      border-radius: inherit;
+      z-index: -1;
+      opacity: 0.6;
+    }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Competitor from Hell</h1>
-    <p>Wordt zo gebouwd... 🔨</p>
-  </div>
+<body class="font-body text-white overflow-x-hidden">
+
+  <!-- NAV -->
+  <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-6 py-4" id="nav">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="#" class="font-display font-bold text-xl tracking-tight">ally</a>
+      <div class="flex items-center gap-6">
+        <a href="#why" class="text-sm text-white/60 hover:text-white transition-colors font-medium hidden sm:block">Why we exist</a>
+        <a href="#how" class="btn-glow text-sm font-semibold text-white px-5 py-2.5 rounded-full cursor-pointer">Get Ally free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO — Full screen centered statement -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden px-6">
+    <!-- Blobs -->
+    <div class="blob-1" style="top: 10%; left: -10%;"></div>
+    <div class="blob-2" style="top: 40%; right: -15%;"></div>
+    <div class="blob-3" style="bottom: 10%; left: 30%;"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <!-- Left: Text -->
+      <div class="text-center md:text-left">
+        <div data-animate class="inline-block mb-6">
+          <span class="text-xs font-body font-semibold tracking-widest uppercase text-pink-400 bg-pink-500/10 px-4 py-2 rounded-full border border-pink-500/20">Stop overpaying. Start outsmarting.</span>
+        </div>
+        <h1 data-animate data-animate-delay="1" class="font-display font-black text-5xl sm:text-6xl md:text-7xl leading-none tracking-tight mb-6">
+          <span class="gradient-text">Your money.</span><br>
+          <span class="text-white">Your rules.</span>
+        </h1>
+        <p data-animate data-animate-delay="2" class="text-lg sm:text-xl text-white/50 max-w-xl mb-10 leading-relaxed font-normal">
+          Ally is the AI that manages all your subscriptions, switches providers automatically, and makes sure you never overpay again.
+        </p>
+        <div data-animate data-animate-delay="3" class="flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4">
+          <a href="#how" class="btn-glow text-base font-semibold text-white px-8 py-4 rounded-full cursor-pointer">
+            See how it works
+            <svg class="inline-block ml-2 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </a>
+        </div>
+
+        <!-- Floating stat pills -->
+        <div data-animate data-animate-delay="4" class="flex flex-wrap justify-center md:justify-start gap-3 mt-14">
+          <div class="bg-white/5 border border-white/10 rounded-full px-5 py-2 text-sm">
+            <span class="text-pink-400 font-bold">340K+</span>
+            <span class="text-white/40 ml-1">users</span>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-full px-5 py-2 text-sm">
+            <span class="text-purple-400 font-bold">&euro;14.2M</span>
+            <span class="text-white/40 ml-1">saved</span>
+          </div>
+          <div class="bg-white/5 border border-white/10 rounded-full px-5 py-2 text-sm">
+            <span class="text-pink-400 font-bold">47</span>
+            <span class="text-white/40 ml-1">providers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Photo -->
+      <div data-animate data-animate-delay="2" class="hidden md:flex justify-center">
+        <div class="relative">
+          <div class="absolute inset-0 bg-gradient-to-br from-pink-500/30 to-purple-600/30 rounded-3xl blur-3xl scale-110"></div>
+          <div class="relative w-full max-w-md">
+            <!-- Glow behind the blob shape -->
+            <div class="absolute -inset-4 bg-gradient-to-br from-pink-500/30 via-purple-500/20 to-pink-400/20 blur-2xl animate-pulse" style="clip-path: polygon(25% 0%, 80% 5%, 100% 30%, 95% 70%, 75% 100%, 20% 95%, 0% 65%, 5% 25%);"></div>
+            <img src="https://images.pexels.com/photos/5325597/pexels-photo-5325597.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Friends in pink looking at phone together" class="relative w-full object-cover h-[520px] shadow-2xl shadow-purple-500/20 hero-blob" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-white/20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+    </div>
+  </section>
+
+
+  <!-- PROBLEM — The system is rigged -->
+  <section id="why" class="relative py-24 sm:py-32 px-6 overflow-hidden">
+    <div class="blob-2" style="top: -20%; left: -20%; opacity: 0.5;"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto">
+      <div data-animate class="text-center mb-16">
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl leading-tight tracking-tight mb-8">
+          The system is <span class="gradient-text">rigged</span> against you
+        </h2>
+        <p class="text-lg sm:text-xl text-white/50 leading-relaxed max-w-3xl mx-auto">
+          You're paying too much for broadband, energy, insurance, and streaming — and every provider is counting on you being too busy to notice. They lock you into contracts, bury better deals in fine print, and bet on your inertia.
+        </p>
+      </div>
+
+      <!-- Rigged stats -->
+      <div data-animate class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-center">
+          <div class="font-display font-bold text-4xl sm:text-5xl gradient-text mb-3">&euro;482</div>
+          <p class="text-white/40 text-sm font-medium">average yearly overspend per Dutch household</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-center">
+          <div class="font-display font-bold text-4xl sm:text-5xl gradient-text mb-3">73%</div>
+          <p class="text-white/40 text-sm font-medium">never compare deals after signing a contract</p>
+        </div>
+        <div class="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-8 text-center">
+          <div class="font-display font-bold text-4xl sm:text-5xl gradient-text mb-3">6.2</div>
+          <p class="text-white/40 text-sm font-medium">hours average to switch one provider</p>
+        </div>
+      </div>
+
+      <div data-animate class="text-center mt-10">
+        <p class="text-white/30 text-base italic">Not because better options don't exist — but because nobody's fighting on your side.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SOLUTION — One AI. Every deal. Always. -->
+  <section class="relative py-24 sm:py-32 px-6 overflow-hidden">
+    <div class="blob-1" style="bottom: -30%; right: -20%; opacity: 0.4;"></div>
+    <div class="blob-3" style="top: -10%; left: 50%; opacity: 0.3;"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto">
+      <div data-animate class="text-center mb-16">
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl leading-tight tracking-tight">
+          One AI. Every deal. <span class="gradient-text">Always.</span>
+        </h2>
+      </div>
+
+      <!-- Alternating feature rows -->
+      <div class="space-y-20 sm:space-y-28">
+        <!-- Feature 1: Auto-switch -->
+        <div data-animate class="grid md:grid-cols-2 gap-10 items-center">
+          <div class="order-2 md:order-1">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              </div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-pink-400">Auto-switch</span>
+            </div>
+            <h3 class="font-display font-bold text-2xl sm:text-3xl mb-4 leading-snug">The best deal,<br>every single month</h3>
+            <p class="text-white/50 text-base leading-relaxed">Ally monitors every provider in the Netherlands and moves you to the best deal, every month, automatically. You approve with one tap. Done.</p>
+          </div>
+          <div class="order-1 md:order-2 flex justify-center">
+            <div class="relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-purple-600/20 rounded-3xl blur-3xl"></div>
+              <div class="relative bg-dark-700 border border-white/[0.08] rounded-3xl p-6 sm:p-8 w-full max-w-sm">
+                <div class="flex items-center justify-between mb-6">
+                  <span class="text-xs text-white/40 font-medium">Current provider</span>
+                  <span class="text-xs text-pink-400 font-semibold bg-pink-500/10 px-3 py-1 rounded-full">Cheaper found</span>
+                </div>
+                <div class="bg-white/[0.03] rounded-xl p-4 mb-3 border border-white/[0.06]">
+                  <div class="flex items-center justify-between">
+                    <span class="text-white/60 text-sm">KPN Internet</span>
+                    <span class="text-white font-bold">&euro;54/mo</span>
+                  </div>
+                </div>
+                <div class="flex justify-center my-3">
+                  <svg class="w-5 h-5 text-purple-400 animate-bounce" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                </div>
+                <div class="bg-gradient-to-r from-pink-500/10 to-purple-500/10 rounded-xl p-4 border border-pink-500/20">
+                  <div class="flex items-center justify-between">
+                    <span class="text-white text-sm font-medium">Odido Fiber</span>
+                    <span class="text-pink-400 font-bold">&euro;37/mo</span>
+                  </div>
+                  <div class="text-xs text-green-400 mt-1">Save &euro;204/year</div>
+                </div>
+                <button class="w-full mt-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-sm font-semibold py-3 rounded-xl">Switch now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 2: Zero contracts -->
+        <div data-animate class="grid md:grid-cols-2 gap-10 items-center">
+          <div class="flex justify-center">
+            <div class="relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-500/20 rounded-3xl blur-3xl"></div>
+              <div class="relative bg-dark-700 border border-white/[0.08] rounded-3xl p-6 sm:p-8 w-full max-w-sm">
+                <div class="text-center mb-6">
+                  <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/20 mb-4">
+                    <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  </div>
+                  <div class="font-display font-bold text-2xl mb-1">Zero lock-in</div>
+                  <p class="text-white/40 text-sm">Leave any provider, any time</p>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span class="text-white/60 text-sm">No cancellation fees</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span class="text-white/60 text-sm">No fine print traps</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span class="text-white/60 text-sm">Switch tomorrow if a better deal drops</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-purple-400">Zero contracts</span>
+            </div>
+            <h3 class="font-display font-bold text-2xl sm:text-3xl mb-4 leading-snug">No lock-ins.<br>No cancellation fees.<br>No fine print.</h3>
+            <p class="text-white/50 text-base leading-relaxed">If a better deal appears tomorrow, you're on it tomorrow. Ally doesn't trap you — it fights for you.</p>
+          </div>
+        </div>
+
+        <!-- Feature 3: One dashboard -->
+        <div data-animate class="grid md:grid-cols-2 gap-10 items-center">
+          <div class="order-2 md:order-1">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+              </div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-pink-400">One dashboard</span>
+            </div>
+            <h3 class="font-display font-bold text-2xl sm:text-3xl mb-4 leading-snug">Everything.<br>One app.<br>Total control.</h3>
+            <p class="text-white/50 text-base leading-relaxed">Broadband, energy, insurance, streaming — everything in one place. See what you pay, what you save, and what Ally is doing for you. One app. Total control.</p>
+          </div>
+          <div class="order-1 md:order-2 flex justify-center">
+            <div class="relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-purple-600/20 rounded-3xl blur-3xl"></div>
+              <div class="relative bg-dark-700 border border-white/[0.08] rounded-3xl p-6 sm:p-8 w-full max-w-sm">
+                <div class="flex items-center justify-between mb-6">
+                  <span class="text-white/60 text-sm font-medium">Your subscriptions</span>
+                  <span class="text-xs text-green-400 font-semibold">All optimized</span>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between bg-white/[0.03] rounded-xl px-4 py-3 border border-white/[0.06]">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.858 15.355-5.858 21.213 0"/></svg>
+                      </div>
+                      <span class="text-white/80 text-sm">Internet</span>
+                    </div>
+                    <span class="text-white font-semibold text-sm">&euro;37</span>
+                  </div>
+                  <div class="flex items-center justify-between bg-white/[0.03] rounded-xl px-4 py-3 border border-white/[0.06]">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                      </div>
+                      <span class="text-white/80 text-sm">Energy</span>
+                    </div>
+                    <span class="text-white font-semibold text-sm">&euro;89</span>
+                  </div>
+                  <div class="flex items-center justify-between bg-white/[0.03] rounded-xl px-4 py-3 border border-white/[0.06]">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                      </div>
+                      <span class="text-white/80 text-sm">Insurance</span>
+                    </div>
+                    <span class="text-white font-semibold text-sm">&euro;62</span>
+                  </div>
+                  <div class="flex items-center justify-between bg-white/[0.03] rounded-xl px-4 py-3 border border-white/[0.06]">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                      </div>
+                      <span class="text-white/80 text-sm">Streaming</span>
+                    </div>
+                    <span class="text-white font-semibold text-sm">&euro;18</span>
+                  </div>
+                </div>
+                <div class="mt-5 pt-5 border-t border-white/[0.06] flex items-center justify-between">
+                  <span class="text-white/40 text-sm">Total monthly</span>
+                  <span class="text-white font-display font-bold text-xl">&euro;206</span>
+                </div>
+                <div class="text-center mt-2">
+                  <span class="text-green-400 text-xs font-semibold">Saving &euro;41/mo vs. before Ally</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PRODUCT SHOWCASE — See Ally in action -->
+  <section id="how" class="relative py-24 sm:py-32 px-6 overflow-hidden">
+    <div class="blob-1" style="top: 20%; left: -15%; opacity: 0.35;"></div>
+    <div class="blob-3" style="bottom: 0%; right: -10%; opacity: 0.3;"></div>
+
+    <div class="relative z-10 max-w-5xl mx-auto">
+      <div data-animate class="text-center mb-12">
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl leading-tight tracking-tight mb-4">
+          See Ally <span class="gradient-text">in action</span>
+        </h2>
+        <p class="text-white/40 text-lg">Three steps. Thirty seconds. Savings forever.</p>
+      </div>
+
+      <!-- Phone mockup with AI agent chat -->
+      <div data-animate class="flex justify-center mb-24">
+        <div class="relative">
+          <!-- Glow behind phone -->
+          <div class="absolute inset-0 bg-gradient-to-b from-pink-500/25 to-purple-600/25 rounded-[3rem] blur-3xl scale-110"></div>
+
+          <!-- Phone frame -->
+          <div class="relative bg-gradient-to-b from-dark-700 to-dark-900 border-[3px] border-white/10 rounded-[2.5rem] p-3 w-[300px] sm:w-[320px] shadow-2xl shadow-purple-500/15">
+            <!-- Notch -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-dark-900 rounded-b-2xl z-20 border-b border-x border-white/5"></div>
+
+            <!-- Screen -->
+            <div class="bg-dark-900 rounded-[2rem] overflow-hidden">
+              <!-- Status bar -->
+              <div class="flex items-center justify-between px-6 pt-8 pb-2">
+                <span class="text-white/40 text-[10px] font-medium">9:41</span>
+                <div class="flex items-center gap-1">
+                  <div class="w-3.5 h-2 rounded-sm border border-white/30 flex items-center justify-end pr-0.5"><div class="w-1.5 h-1 rounded-sm bg-green-400"></div></div>
+                </div>
+              </div>
+
+              <!-- App header -->
+              <div class="px-5 pb-3 border-b border-white/[0.06]">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/></svg>
+                  </div>
+                  <div>
+                    <p class="text-white font-semibold text-sm">Ally</p>
+                    <p class="text-green-400 text-[10px]">Active now</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat messages -->
+              <div class="px-4 py-4 space-y-3 min-h-[340px]">
+                <!-- Ally message 1 -->
+                <div class="flex gap-2 items-end">
+                  <div class="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                  </div>
+                  <div class="bg-white/[0.06] border border-white/[0.08] rounded-2xl rounded-bl-md px-3.5 py-2.5 max-w-[200px]">
+                    <p class="text-white/80 text-xs leading-relaxed">Hey! I just scanned your subscriptions. You're overpaying on 3 services. Want me to fix that? 👀</p>
+                  </div>
+                </div>
+
+                <!-- User message -->
+                <div class="flex justify-end">
+                  <div class="bg-gradient-to-r from-pink-500/20 to-purple-500/20 border border-pink-500/20 rounded-2xl rounded-br-md px-3.5 py-2.5 max-w-[180px]">
+                    <p class="text-white/90 text-xs leading-relaxed">Yes please! How much can I save?</p>
+                  </div>
+                </div>
+
+                <!-- Ally message 2 — savings card -->
+                <div class="flex gap-2 items-end">
+                  <div class="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                  </div>
+                  <div class="max-w-[210px]">
+                    <div class="bg-white/[0.06] border border-white/[0.08] rounded-2xl rounded-bl-md px-3.5 py-2.5 mb-1.5">
+                      <p class="text-white/80 text-xs leading-relaxed mb-2">Found better deals on all three 🎉</p>
+                    </div>
+                    <!-- Savings mini-card -->
+                    <div class="bg-dark-700 border border-white/[0.08] rounded-xl p-3 space-y-1.5">
+                      <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-[10px]">KPN Internet</span>
+                        <span class="text-green-400 text-[10px] font-bold">-&euro;17/mo</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-[10px]">Vattenfall Energy</span>
+                        <span class="text-green-400 text-[10px] font-bold">-&euro;23/mo</span>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <span class="text-white/60 text-[10px]">Netflix + Spotify</span>
+                        <span class="text-green-400 text-[10px] font-bold">-&euro;4/mo</span>
+                      </div>
+                      <div class="border-t border-white/[0.06] pt-1.5 mt-1.5 flex items-center justify-between">
+                        <span class="text-white/40 text-[10px]">Total saved</span>
+                        <span class="text-white font-bold text-xs">&euro;44/mo</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Ally message 3 — action -->
+                <div class="flex gap-2 items-end">
+                  <div class="w-6 h-6 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                  </div>
+                  <div class="bg-white/[0.06] border border-white/[0.08] rounded-2xl rounded-bl-md px-3.5 py-2.5 max-w-[200px]">
+                    <p class="text-white/80 text-xs leading-relaxed">One tap and I'll switch all three. You'll save &euro;528/year. Ready?</p>
+                    <button class="w-full mt-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-[10px] font-semibold py-2 rounded-lg">Switch all now ✨</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat input -->
+              <div class="px-4 pb-6 pt-2">
+                <div class="flex items-center gap-2 bg-white/[0.04] border border-white/[0.08] rounded-full px-4 py-2.5">
+                  <span class="text-white/30 text-xs flex-1">Ask Ally anything...</span>
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 flex items-center justify-center shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"/></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative">
+        <!-- Vertical connector line on desktop -->
+        <div class="hidden md:block step-line" style="left: 50%; transform: translateX(-50%);"></div>
+
+        <div class="space-y-16 sm:space-y-24">
+          <!-- Step 1 -->
+          <div data-animate class="grid md:grid-cols-2 gap-8 items-center">
+            <div class="text-right hidden md:block">
+              <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-display font-bold text-sm w-14 h-14 rounded-2xl flex items-center justify-center ml-auto mb-4 shadow-lg shadow-pink-500/25">01</div>
+              <h3 class="font-display font-bold text-xl sm:text-2xl mb-3">Connect your accounts</h3>
+              <p class="text-white/50 text-base leading-relaxed">Link your current providers in 30 seconds. Ally scans your contracts and finds what you're overpaying.</p>
+            </div>
+            <div class="md:hidden">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-display font-bold text-sm w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-pink-500/25">01</div>
+                <h3 class="font-display font-bold text-xl">Connect your accounts</h3>
+              </div>
+              <p class="text-white/50 text-base leading-relaxed">Link your current providers in 30 seconds. Ally scans your contracts and finds what you're overpaying.</p>
+            </div>
+            <div class="flex justify-center md:justify-start">
+              <div class="bg-dark-700 border border-white/[0.08] rounded-2xl p-5 w-full max-w-xs">
+                <p class="text-white/40 text-xs mb-3 font-medium">Connected accounts</p>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2 bg-green-500/10 rounded-lg px-3 py-2 border border-green-500/20">
+                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span class="text-white/70 text-sm">KPN Internet</span>
+                  </div>
+                  <div class="flex items-center gap-2 bg-green-500/10 rounded-lg px-3 py-2 border border-green-500/20">
+                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    <span class="text-white/70 text-sm">Vattenfall Energy</span>
+                  </div>
+                  <div class="flex items-center gap-2 bg-purple-500/10 rounded-lg px-3 py-2 border border-purple-500/20 animate-pulse">
+                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    <span class="text-white/50 text-sm">Add more...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div data-animate class="grid md:grid-cols-2 gap-8 items-center">
+            <div class="flex justify-center md:justify-end order-2 md:order-1">
+              <div class="bg-dark-700 border border-white/[0.08] rounded-2xl p-5 w-full max-w-xs">
+                <p class="text-white/40 text-xs mb-3 font-medium">Ally found 3 better deals</p>
+                <div class="space-y-2">
+                  <div class="bg-gradient-to-r from-pink-500/10 to-purple-500/10 rounded-lg px-3 py-2 border border-pink-500/20">
+                    <div class="flex items-center justify-between">
+                      <span class="text-white/80 text-sm">Internet</span>
+                      <span class="text-green-400 text-xs font-bold">-&euro;17/mo</span>
+                    </div>
+                  </div>
+                  <div class="bg-gradient-to-r from-pink-500/10 to-purple-500/10 rounded-lg px-3 py-2 border border-pink-500/20">
+                    <div class="flex items-center justify-between">
+                      <span class="text-white/80 text-sm">Energy</span>
+                      <span class="text-green-400 text-xs font-bold">-&euro;23/mo</span>
+                    </div>
+                  </div>
+                  <div class="bg-gradient-to-r from-pink-500/10 to-purple-500/10 rounded-lg px-3 py-2 border border-pink-500/20">
+                    <div class="flex items-center justify-between">
+                      <span class="text-white/80 text-sm">Streaming</span>
+                      <span class="text-green-400 text-xs font-bold">-&euro;4/mo</span>
+                    </div>
+                  </div>
+                </div>
+                <button class="w-full mt-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-semibold py-2.5 rounded-lg">Approve all switches</button>
+              </div>
+            </div>
+            <div class="order-1 md:order-2">
+              <div class="hidden md:block">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-600 text-white font-display font-bold text-sm w-14 h-14 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-purple-500/25">02</div>
+                <h3 class="font-display font-bold text-xl sm:text-2xl mb-3">Ally negotiates for you</h3>
+                <p class="text-white/50 text-base leading-relaxed">Our AI contacts providers, compares every deal on the market, and picks the best one. You approve with one tap.</p>
+              </div>
+              <div class="md:hidden">
+                <div class="flex items-center gap-4 mb-4">
+                  <div class="bg-gradient-to-r from-purple-500 to-pink-600 text-white font-display font-bold text-sm w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/25">02</div>
+                  <h3 class="font-display font-bold text-xl">Ally negotiates for you</h3>
+                </div>
+                <p class="text-white/50 text-base leading-relaxed">Our AI contacts providers, compares every deal on the market, and picks the best one. You approve with one tap.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div data-animate class="grid md:grid-cols-2 gap-8 items-center">
+            <div class="text-right hidden md:block">
+              <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-display font-bold text-sm w-14 h-14 rounded-2xl flex items-center justify-center ml-auto mb-4 shadow-lg shadow-pink-500/25">03</div>
+              <h3 class="font-display font-bold text-xl sm:text-2xl mb-3">Savings on autopilot</h3>
+              <p class="text-white/50 text-base leading-relaxed">Sit back. Ally keeps watching the market and switches you again whenever a better deal appears. You never overpay again.</p>
+            </div>
+            <div class="md:hidden">
+              <div class="flex items-center gap-4 mb-4">
+                <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-display font-bold text-sm w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-pink-500/25">03</div>
+                <h3 class="font-display font-bold text-xl">Savings on autopilot</h3>
+              </div>
+              <p class="text-white/50 text-base leading-relaxed">Sit back. Ally keeps watching the market and switches you again whenever a better deal appears. You never overpay again.</p>
+            </div>
+            <div class="flex justify-center md:justify-start">
+              <div class="bg-dark-700 border border-white/[0.08] rounded-2xl p-5 w-full max-w-xs text-center">
+                <p class="text-white/40 text-xs mb-2 font-medium">Total saved this year</p>
+                <div class="font-display font-bold text-4xl gradient-text mb-1">&euro;528</div>
+                <p class="text-green-400 text-xs font-semibold mb-4">and counting...</p>
+                <div class="flex items-center justify-center gap-1">
+                  <div class="w-8 h-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-500"></div>
+                  <div class="w-6 h-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-400"></div>
+                  <div class="w-4 h-2 rounded-full bg-gradient-to-r from-pink-400 to-purple-400"></div>
+                  <div class="w-3 h-2 rounded-full bg-purple-500/30"></div>
+                  <div class="w-2 h-2 rounded-full bg-purple-500/20"></div>
+                </div>
+                <p class="text-white/30 text-xs mt-2">12 auto-switches this year</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- DANGER — Why existing players should be worried -->
+  <section class="relative py-24 sm:py-32 px-6 overflow-hidden">
+    <div class="blob-2" style="top: 10%; right: -20%; opacity: 0.4;"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto">
+      <div data-animate class="text-center mb-16">
+        <span class="text-xs font-semibold tracking-widest uppercase text-pink-400 bg-pink-500/10 px-4 py-2 rounded-full border border-pink-500/20">The uncomfortable truth</span>
+      </div>
+
+      <div data-animate class="text-center mb-14">
+        <h2 class="font-display font-black text-2xl sm:text-3xl md:text-4xl leading-tight max-w-3xl mx-auto">
+          Every telecom, energy company, and insurer in the Netherlands just became a <span class="gradient-text">supplier bidding for your attention.</span>
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-5">
+        <div data-animate data-animate-delay="1" class="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:border-pink-500/30 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          </div>
+          <p class="text-white/70 text-sm leading-relaxed"><span class="text-white font-semibold">KPN can't build a neutral AI</span> — recommending a competitor would tank their stock price.</p>
+        </div>
+        <div data-animate data-animate-delay="2" class="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:border-purple-500/30 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <p class="text-white/70 text-sm leading-relaxed"><span class="text-white font-semibold">Ally is free for customers.</span> Providers pay us a commission every time they win a contract through our platform.</p>
+        </div>
+        <div data-animate data-animate-delay="3" class="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 hover:border-pink-500/30 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </div>
+          <p class="text-white/70 text-sm leading-relaxed"><span class="text-white font-semibold">We don't need long-term contracts.</span> We need you to trust us for one month. Then we prove it again next month. And the month after that.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CUSTOMER — Built for the no-loyalty generation -->
+  <section class="relative py-24 sm:py-32 px-6 overflow-hidden">
+    <div class="blob-3" style="top: 30%; left: -15%; opacity: 0.3;"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto">
+      <div data-animate class="text-center">
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl leading-tight tracking-tight mb-6">
+          Built for the <span class="gradient-text">no-loyalty generation</span>
+        </h2>
+        <p class="text-white/50 text-lg max-w-2xl mx-auto mb-12">
+          For the 27-year-old in Amsterdam who manages their entire life from their phone, has zero patience for helpdesks, and refuses to overpay for anything.
+        </p>
+      </div>
+
+      <div data-animate class="max-w-4xl mx-auto grid md:grid-cols-5 gap-8 items-center">
+        <!-- Photo -->
+        <div class="hidden md:block md:col-span-2">
+          <div class="relative">
+            <div class="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-purple-600/20 rounded-3xl blur-2xl scale-105"></div>
+            <img src="https://images.pexels.com/photos/16373326/pexels-photo-16373326.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Young woman with phone" class="relative rounded-3xl w-full object-cover h-[360px] border border-white/10" loading="lazy">
+          </div>
+        </div>
+        <!-- Quote -->
+        <div class="md:col-span-3">
+          <div class="relative bg-white/[0.03] border border-white/[0.06] rounded-3xl p-8 sm:p-10">
+            <!-- Quote mark -->
+            <div class="absolute -top-5 left-8">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+              </div>
+            </div>
+
+            <p class="text-white/80 text-lg sm:text-xl leading-relaxed mb-6 mt-2">
+              I used to spend hours comparing deals and calling providers. Now Ally just handles it. Last month it saved me &euro;40 without me doing anything.
+            </p>
+
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center font-display font-bold text-sm text-white">PO</div>
+              <div>
+                <p class="text-white font-semibold text-sm">Priya Oomen</p>
+                <p class="text-white/40 text-sm">Freelance designer, Amsterdam</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FINAL CTA -->
+  <section class="relative py-24 sm:py-32 px-6 overflow-hidden">
+    <div class="blob-1" style="top: 0; left: 20%; opacity: 0.3;"></div>
+    <div class="blob-2" style="bottom: 0; right: 20%; opacity: 0.3;"></div>
+
+    <div class="relative z-10 max-w-3xl mx-auto text-center">
+      <div data-animate>
+        <h2 class="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-none tracking-tight mb-6">
+          Stop overpaying.<br><span class="gradient-text">Start with Ally.</span>
+        </h2>
+        <p class="text-white/40 text-lg mb-10 max-w-xl mx-auto">Free for you. Always. Join 340,000+ people who let AI fight for their wallet.</p>
+        <a href="#" class="btn-glow inline-block text-base font-semibold text-white px-10 py-4 rounded-full">
+          Get Ally free
+          <svg class="inline-block ml-2 w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/[0.06] py-10 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="font-display font-bold text-lg">ally</span>
+        <span class="text-white/20">|</span>
+        <span class="text-white/40 text-sm">Your money. Your rules.</span>
+      </div>
+      <p class="text-white/30 text-sm">&copy; 2026 Ally &middot; Built at AI Lab</p>
+    </div>
+  </footer>
+
+
+  <!-- FlyonUI JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flyonui@2.4.1/flyonui.js"></script>
+
+  <script>
+    // Scroll-triggered animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('[data-animate]').forEach(el => {
+      observer.observe(el);
+      // Force-check elements already in viewport on load
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('animate-visible');
+      }
+    });
+
+    // Nav background on scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
 </body>
 </html>
